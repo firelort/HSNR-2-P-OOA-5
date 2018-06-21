@@ -34,18 +34,15 @@ void SFMLGraphVisualizer::visualize(DiGraph &graph) {
                     break;
                 case sf::Event::KeyPressed:
                     if (event.key.code == sf::Keyboard::U) {
-                        if (_updateWeight == true)
-                            _updateWeight = false;
-                        else
-                            _updateWeight = true;
-                    }
-                    if (event.key.code == sf::Keyboard::S) {
+                        _updateWeight = !_updateWeight;
+                    } else if (event.key.code == sf::Keyboard::L) {
+                        _drawLabelOfEdge = !_drawLabelOfEdge;
+                    } else if (event.key.code == sf::Keyboard::S) {
                         if (-1 < (nodeId = changeName(graph))) {
                             startNodeKey = graph.getAllNodes().getValueAtPos(nodeId)->getKey();
                             cout << "Die Startnode wurde zu " << startNodeKey << " gesetzt." << endl;
                         }
-                    }
-                    if (event.key.code == sf::Keyboard::E) {
+                    } else if (event.key.code == sf::Keyboard::E) {
                         if (-1 < (nodeId = changeName(graph))) {
                             endNodeKey = graph.getAllNodes().getValueAtPos(nodeId)->getKey();
                             cout << "Die Endnode wurde zu " << endNodeKey << " gesetzt." << endl;
@@ -81,7 +78,14 @@ void SFMLGraphVisualizer::visualize(DiGraph &graph) {
         if (startNodeKey.compare("NULL") != 0 && endNodeKey.compare("NULL") != 0)
             highlightPath(graph.getShortestPathByDijkstra(startNodeKey, endNodeKey));
 
-        drawUpdate();
+        if (_updateWeight || !_drawLabelOfEdge) {
+            if (_updateWeight && !_drawLabelOfEdge)
+                drawUpdate("The weight of edges is updated and the label of edges isn't visable.");
+            else if (_updateWeight)
+                drawUpdate("The weight of edges is updated.");
+            else
+                drawUpdate("The label of edges isn't visable.");
+        }
         window.display();
     }
 }
@@ -102,13 +106,10 @@ void SFMLGraphVisualizer::drawNode(Node &node, sf::Color nodeColor) {
     window.draw(Label);
 }
 
-void SFMLGraphVisualizer::drawUpdate() {
-    if (!_updateWeight)
-        return;
-
+void SFMLGraphVisualizer::drawUpdate(string myString) {
     sf::Text text;
     text.setFont(font);
-    text.setString(" The weight of the edges is updated.");
+    text.setString(myString);
     text.setCharacterSize(24);
     text.setColor(sf::Color::Blue);
 
@@ -138,14 +139,16 @@ void SFMLGraphVisualizer::drawEdge(Edge &edge, sf::Color color, double weight, i
     //  thickness
     window.draw(line, 2, sf::Lines);
 
-    std::stringstream weightstring;
-    weightstring << weight;
-    sf::Text Labelweight(weightstring.str(), font, 32);
-    int size = sqrt(pow(p.x - q.x, 2) + pow(p.y - q.y, 2));
-    Labelweight.setPosition(p.x - (size / 2) * cos(angle) + 10 * sin(angle),
-                            p.y - (size / 2) * sin(angle) + 10 * cos(angle));
-    Labelweight.setColor(sf::Color::Blue);
-    window.draw(Labelweight);
+    if (_drawLabelOfEdge) {
+        std::stringstream weightstring;
+        weightstring << weight;
+        sf::Text Labelweight(weightstring.str(), font, 32);
+        int size = sqrt(pow(p.x - q.x, 2) + pow(p.y - q.y, 2));
+        Labelweight.setPosition(p.x - (size / 2) * cos(angle) + 10 * sin(angle),
+                                p.y - (size / 2) * sin(angle) + 10 * cos(angle));
+        Labelweight.setColor(sf::Color::Blue);
+        window.draw(Labelweight);
+    }
 
 // Erstes  Segment
     p.x = (int) (q.x + arrowMagnitude * cos(angle + PI / 8));

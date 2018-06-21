@@ -47,7 +47,8 @@ void FileInterface::createFile() {
           << "Mönchengladbach 400 500" << endl
           << "Aachen 500 600" << endl
           << "############ All edges enter pls below" << endl
-          << "############ Format: StartNode EndNode (please use _ instead of space) Weight/Distance (enter nan to let the system calculate.)" << endl
+          << "############ Format: StartNode EndNode (please use _ instead of space) Weight/Distance (enter nan to let the system calculate.)"
+          << endl
           << "Krefeld Aachen 100" << endl
           << "Aachen Bad_Neuenahr 170" << endl
           << "Mönchengladbach Krefeld 200" << endl
@@ -65,22 +66,22 @@ void FileInterface::createFile() {
 }
 
 void FileInterface::readFile() {
-    string line,compareString, compareLine, cityOne, cityTwo;
+    string line, compareString, compareLine, cityOne, cityTwo;
     int posX, posY;
     float weight;
-    Node * node;
+    Node *node;
     bool existent;
 
     while (getline(_file, line)) {
         compareLine = line;
-        compareString = compareLine.substr(0,1);
+        compareString = compareLine.substr(0, 1);
         if (compareString.compare("#") != 0) { //If first char isn't a #
             Tokenizer tok(line, " ");
 
             if (tok.countTokens() != 3)
                 throw MyExecption("FileInterface: File is corrupted.");
 
-            if(tok.secArgIsInt() == true) {
+            if (tok.secArgIsInt() == true) {
                 cityOne = tok.nextToken();
                 posX = stoi(tok.nextToken());
                 posY = stoi(tok.nextToken());
@@ -119,7 +120,7 @@ void FileInterface::getFileName() {
 
 void FileInterface::updateFile() {
     _file.close();
-    _file.open(_fileName,fstream::out);
+    _file.open(_fileName, fstream::out);
 
     _file << "############ Node and Edge List ############" << endl
           << "############ All nodes enter pls below" << endl
@@ -127,15 +128,24 @@ void FileInterface::updateFile() {
 
 
     for (int nodeCounterForNode = 0; nodeCounterForNode < _graph->_nodeList->getListSize(); nodeCounterForNode++) {
-        _file << _graph->_nodeList->getValueAtPos(nodeCounterForNode)->getKey() << " " << _graph->_nodeList->getValueAtPos(nodeCounterForNode)->getPosX() << " " << _graph->_nodeList->getValueAtPos(nodeCounterForNode)->getPosY() << endl;
+        _file << _graph->_nodeList->getValueAtPos(nodeCounterForNode)->getKey() << " "
+              << _graph->_nodeList->getValueAtPos(nodeCounterForNode)->getPosX() << " "
+              << _graph->_nodeList->getValueAtPos(nodeCounterForNode)->getPosY() << endl;
     }
 
     _file << "############ All edges enter pls below" << endl
-          << "############ Format: StartNode EndNode (please use _ instead of space) Weight/Distance (enter nan to let the system calculate.)" << endl;
+          << "############ Format: StartNode EndNode (please use _ instead of space) Weight/Distance (enter nan to let the system calculate.)"
+          << endl;
 
     for (int nodeCounterForEdge = 0; nodeCounterForEdge < _graph->_nodeList->getListSize(); nodeCounterForEdge++) {
-        for (int edgeCounter = 0; edgeCounter < _graph->_nodeList->getValueAtPos(nodeCounterForEdge)->getEdges().getListSize() ; edgeCounter++) {
-            _file << _graph->_nodeList->getValueAtPos(nodeCounterForEdge)->getEdges().getValueAtPos(edgeCounter)->getStartNode()->getKey()  << " " << _graph->_nodeList->getValueAtPos(nodeCounterForEdge)->getEdges().getValueAtPos(edgeCounter)->getEndNode()->getKey() << " " << _graph->_nodeList->getValueAtPos(nodeCounterForEdge)->getEdges().getValueAtPos(edgeCounter)->getWeight() << endl;
+        for (int edgeCounter = 0; edgeCounter < _graph->_nodeList->getValueAtPos(
+                nodeCounterForEdge)->getEdges().getListSize(); edgeCounter++) {
+            _file << _graph->_nodeList->getValueAtPos(nodeCounterForEdge)->getEdges().getValueAtPos(
+                    edgeCounter)->getStartNode()->getKey() << " "
+                  << _graph->_nodeList->getValueAtPos(nodeCounterForEdge)->getEdges().getValueAtPos(
+                          edgeCounter)->getEndNode()->getKey() << " "
+                  << _graph->_nodeList->getValueAtPos(nodeCounterForEdge)->getEdges().getValueAtPos(
+                          edgeCounter)->getWeight() << endl;
         }
     }
 
@@ -145,9 +155,9 @@ void FileInterface::updateFile() {
     _file.close();
 }
 
-Node* FileInterface::getNodeAdress(string nodeKey) {
+Node *FileInterface::getNodeAdress(string nodeKey) {
     for (int i = 0; i < _graph->_nodeList->getListSize(); i++) {
-        if(nodeKey == _graph->_nodeList->getValueAtPos(i)->getKey())
+        if (nodeKey == _graph->_nodeList->getValueAtPos(i)->getKey())
             return _graph->_nodeList->getValueAtPos(i);
     }
     throw MyExecption("Error: Can not get the node adress - IN: DiGraph");
@@ -155,7 +165,7 @@ Node* FileInterface::getNodeAdress(string nodeKey) {
 
 unsigned int FileInterface::getNodePos(string nodeKey) {
     for (int i = 0; i < _graph->_nodeList->getListSize(); i++) {
-        if(nodeKey == _graph->_nodeList->getValueAtPos(i)->getKey())
+        if (nodeKey == _graph->_nodeList->getValueAtPos(i)->getKey())
             return (unsigned int) i;
     }
     throw MyExecption("Error: Can not get the node adress - IN: DiGraph");
@@ -177,7 +187,7 @@ float FileInterface::calcDistance(string startNodeKey, string endNodeKey) {
             firstNode->getEdges().getValueAtPos(i)->setWeight(distance);
     }
 
-    for (int j = 0; j < secondNode->getEdges().getListSize() ; j++) {
+    for (int j = 0; j < secondNode->getEdges().getListSize(); j++) {
         if (secondNode->getEdges().getValueAtPos(j)->getEndNode() == firstNode)
             secondNode->getEdges().getValueAtPos(j)->setWeight(distance);
     }
@@ -185,11 +195,11 @@ float FileInterface::calcDistance(string startNodeKey, string endNodeKey) {
     return distance;
 }
 
-void FileInterface::setGraph(DiGraph* graph) {
+void FileInterface::setGraph(DiGraph *graph) {
     _graph = graph;
 }
 
-DiGraph* FileInterface::getGraph() {
+DiGraph *FileInterface::getGraph() {
     return _graph;
 }
 
@@ -219,7 +229,7 @@ string Tokenizer::nextToken() {
 
 bool Tokenizer::secArgIsInt() {
     string compareString = _tokens.getValueAtPos(1); // An zweiter Stelle ist ein Int
-    compareString = compareString.substr(0,1);
+    compareString = compareString.substr(0, 1);
     for (int i = 1; i < 10; ++i) {
         if (compareString.compare(to_string(i)) == 0)
             return true;

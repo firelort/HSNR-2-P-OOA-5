@@ -16,7 +16,7 @@ private:
     int getSelectedNode(DiGraph &graph, int mouseX, int mouseY);
     void moveNode (DiGraph &graph, int &nodePos);
     int changeName(DiGraph &graph);
-    void drawUpdate();
+    void drawUpdate(string myString);
     void calcNewDistance(DiGraph &graph, int &nodePos);
 public:
     SFMLGraphVisualizer();

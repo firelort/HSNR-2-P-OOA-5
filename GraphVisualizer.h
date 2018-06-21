@@ -10,7 +10,8 @@
 class DiGraph;
 class GraphVisualizer{
 protected:
-    bool _updateWeight;
+    bool _updateWeight = false;
+    bool _drawLabelOfEdge = true;
 public:
     virtual void visualize(DiGraph &graph) = 0;
     virtual void highlightPath(List<Edge *> path) = 0;
